@@ -19,11 +19,11 @@ from skimage.data import coffee
 
 from skimage.measure import compare_ssim
 
-img_en = io.imread(r'E:\CheckDS\bank_logo_decoder\5_en.jpg', as_gray=True)
+img_en = io.imread(r'E:\CheckDS\bank_logo_decoder\2_en.jpg', as_gray=True)
 img_en_filter = filters.gaussian(img_en,sigma=0.5)   #sigma=5
 
 
-img_de = io.imread(r'E:\CheckDS\bank_logo_decoder\5_de.jpg', as_gray=True)
+img_de = io.imread(r'E:\CheckDS\bank_logo_decoder\2_de.jpg', as_gray=True)
 
 
 
@@ -36,10 +36,15 @@ img_de_lbp = skimage.feature.local_binary_pattern(img_de, 8, 1.0, method='var')
 
 gray_diff = abs(img_en_filter - img_de)
 lbp_diff = abs(img_en_lbp - img_de_lbp)
+# gray_diff[gray_diff < (60.0/255)] = 0.0
+# gray_diff[gray_diff >= (60.0/255)] = 1.0
 
-(score,diff)=compare_ssim(img_en_filter,img_de,full=True)
+
+#SSIM
+(score,diff)=compare_ssim(img_en_filter,img_de,full=True,win_size=7)
 diff = (diff*255).astype("uint8")
 diff = - diff + 255
+diff[diff < 140] = 0
 
 plt.figure(figsize=(10, 10))  #
 
