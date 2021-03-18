@@ -27,6 +27,7 @@ def load_banklogo_data():
     anoimg_list = []
     bank_dir = r'E:\CheckDS\bank_logo0927'
     anomaly_dir = r'E:\CheckDS\bank_logo_anomaly'
+    anomaly_dir = r'E:\CheckDS\bank_hualing_anomaly'
 
     frames = sorted(os.listdir(bank_dir))
     for f in frames:
@@ -40,7 +41,7 @@ def load_banklogo_data():
         img = np.array(Image.open(imgpath))
         anoimg_list.append(img)
 
-    anoimg_list = anoimg_list[:10]
+    # anoimg_list = anoimg_list[:10]
     return np.array(img_list), np.array(anoimg_list)
 
 
@@ -79,7 +80,9 @@ up3 = UpSampling2D((2, 2))(conv2_3)
 r = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(up3)
 
 autoencoder = Model(inputs=x, outputs=r)
-autoencoder.load_weights("../model/banklogo_1000_0.51.h5")  # model/banklogo_1000_0.51.h5
+# autoencoder.load_weights("../model/banklogo_1000_0.51.h5")  # model/banklogo_1000_0.51.h5   郭男bad模型
+autoencoder.load_weights("../model/banklogo_hualing_bad.h5")  # 华菱 bad模型
+
 # autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
 autoencoder.summary()
@@ -87,6 +90,22 @@ autoencoder.summary()
 
 
 decoded_imgs = autoencoder.predict(X_test)
+
+
+save_dir = r'E:\CheckDS\bank_huanling_decoder_bad'
+save_en = '{}_en.jpg'
+save_de = '{}_de.jpg'
+
+for i in range(len(decoded_imgs)):
+    X_test[i] = X_test[i] * 255
+    decoded_imgs[i] = decoded_imgs[i] * 255
+
+    im1 = Image.fromarray(X_test[i].astype(np.uint8))
+    im2 = Image.fromarray(decoded_imgs[i].astype(np.uint8))
+
+    im1.save(os.path.join(save_dir, save_en.format(i)))
+    im2.save(os.path.join(save_dir, save_de.format(i)))
+    print('保存第{}张', i)
 
 n = 10
 plt.figure(figsize=(20, 6))

@@ -42,8 +42,7 @@ def load_data():
 
 def load_banklogo_data():
     img_list = []
-    # bank_dir = r'E:\CheckDS\bank_logo0927'
-    bank_dir = r'E:\CheckDS\bank_hualing'
+    bank_dir = r'E:\CheckDS\bank_logo0927'
     frames = sorted(os.listdir(bank_dir))
     for f in frames:
         imgpath = os.path.join(bank_dir, f)
@@ -98,10 +97,10 @@ autoencoder.summary()
 
 
 
-epochs = 300
+epochs = 1000
 batch_size = 8
 
-checkpoint_path = "../model/banklogo_hualing_bad.h5"
+checkpoint_path = "../model/banklogo.h5"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
 # 创建一个保存模型权重的回调
@@ -110,7 +109,7 @@ cp_callback = keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                  verbose=1,save_best_only=True)
 def scheduler(epoch):
     # 每隔400个epoch，学习率减小为原来的1/10
-    if epoch % 80 == 0 and epoch != 0:
+    if epoch % 400 == 0 and epoch != 0:
         lr = K.get_value(autoencoder.optimizer.lr)
         K.set_value(autoencoder.optimizer.lr, lr * 0.1)
         print("=========lr*0.1==========lr changed to {}".format(lr * 0.1))

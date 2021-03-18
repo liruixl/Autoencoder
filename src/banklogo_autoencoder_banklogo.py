@@ -133,6 +133,8 @@ def scheduler(epoch):
     return K.get_value(autoencoder.optimizer.lr)
 reduce_lr = LearningRateScheduler(scheduler)
 
+
+#  ======================是否训练=====================================
 is_train = False
 
 if is_train is True:
@@ -144,11 +146,30 @@ else:
 
 decoded_imgs = autoencoder.predict(X_test)
 
+save_dir = r'E:\CheckDS\bank_logo_decoder'
+save_en = '{}_en.jpg'
+save_de = '{}_de.jpg'
+
+for i in range(len(decoded_imgs)):
+    X_test[i] = X_test[i] * 255
+    decoded_imgs[i] = decoded_imgs[i] * 255
+
+    im1 = Image.fromarray(X_test[i].astype(np.uint8))
+    im2 = Image.fromarray(decoded_imgs[i].astype(np.uint8))
+
+    im1.save(os.path.join(save_dir, save_en.format(i)))
+    im2.save(os.path.join(save_dir, save_de.format(i)))
+    print('保存第{}张', i)
+
+
 n = 10
 plt.figure(figsize=(20, 6))  # 2000*600
 
 for i in range(n):
     # display original
+    X_test[i] = X_test[i] * 255
+    decoded_imgs[i] = decoded_imgs[i] * 255
+
     ax = plt.subplot(3, n, i + 1)
     plt.imshow(X_test[i])
     plt.gray()
@@ -161,19 +182,5 @@ for i in range(n):
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
-
-    save_dir = r'E:\CheckDS\bank_logo_decoder'
-    save_en = '{}_en.jpg'
-    save_de = '{}_de.jpg'
-
-    print(X_test[i].shape)
-    X_test[i] = X_test[i]*255
-    decoded_imgs[i] = decoded_imgs[i]*255
-
-    im1 = Image.fromarray(X_test[i].astype(np.uint8))
-    im2 = Image.fromarray(decoded_imgs[i].astype(np.uint8))
-
-    im1.save(os.path.join(save_dir,save_en.format(i)))
-    im2.save(os.path.join(save_dir,save_de.format(i)))
 
 plt.show()
